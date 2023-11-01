@@ -46,4 +46,16 @@
 # $MediaType = Get-PhysicalDisk | Where-Object { $_.DeviceID -eq 0 } | Select-Object -ExpandProperty "MediaType"
 # Write-Host $MediaType
 
-(Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).sum /1gb
+# (Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).sum /1gb
+
+
+$motherboardManufacturer = (Get-CimInstance -Class Win32_BaseBoard).Manufacturer
+$motherboardProduct = (Get-CimInstance -Class Win32_BaseBoard).Product
+$motherboardSerial = (Get-CimInstance -Class Win32_BaseBoard).SerialNumber
+$motherboardVersion = (Get-CimInstance -Class Win32_BaseBoard).Version
+
+
+Write-Host $motherboardProduct
+Write-Host $motherboardManufacturer
+Write-Host $motherboardVersion
+Write-Host $motherboardSerial

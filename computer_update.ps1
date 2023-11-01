@@ -48,9 +48,9 @@ $windowsProductName = ""
 $OsVersion = ""
 $csDNSHostName = ""
 $csModel = ""
-$csModelSerail = ""
 $csDomain = ""
 $osLastBootUpTime = ""
+
 foreach ($info in $infos) 
 {
     $windowsProductName = $info.OsName

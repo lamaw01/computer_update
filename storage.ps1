@@ -1,0 +1,2 @@
+$storage =  Get-CimInstance Win32_LogicalDisk | Format-Table DeviceID, ProviderName, VolumeName, VolumeSerialNumber, HealthStatus, @{n="Size (GB)"; e={[math]::Round(($_.Size/1GB),2)}; align="center"}, @{n="FreeSpace (GB)"; e={[math]::Round(($_.FreeSpace/1GB),2)}; align="center"} | Out-Host
+Write-Host $storage
