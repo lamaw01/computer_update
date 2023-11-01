@@ -48,15 +48,16 @@ $windowsProductName = ""
 $OsVersion = ""
 $csDNSHostName = ""
 $csModel = ""
+$csModelSerail = ""
 $csDomain = ""
 $osLastBootUpTime = ""
-
 foreach ($info in $infos) 
 {
     $windowsProductName = $info.OsName
     $OsVersion = $info.OsVersion
     $csDNSHostName = $info.CsDNSHostName
     $csModel = $info.CsModel
+    $csModel = $info.s
     $csDomain = $info.CsDomain
     $osLastBootUpTime = $info.OsLastBootUpTime
 }

@@ -1,0 +1,1 @@
+PowerShell.exe -File "C:\Projects\computer_update_script\computer_update.ps1" -ExecutionPolicy Bypass
