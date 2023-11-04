@@ -3,8 +3,10 @@
 # $uuid = (Get-WmiObject -Class Win32_ComputerSystemProduct).UUID
 # Write-Host $uuid
 
-$defender = Get-MpComputerStatus | Format-Table AntivirusSignatureVersion, QuickScanSignatureVersion | Out-Host
+$defender = (Get-MpComputerStatus | Format-List AntivirusSignatureVersion, QuickScanSignatureVersion | Out-String).Trim()
+
 Write-Host $defender
+
 
 # $properties = @{}
 # Get-MpComputerStatus | ForEach-Object {
