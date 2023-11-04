@@ -9,5 +9,15 @@
 # Write-Host $motherboardVersion
 # Write-Host $motherboardSerial
 
-$motherboard = Get-CimInstance -Class Win32_BaseBoard | Format-Table Manufacturer, Product, SerialNumber, Version -Auto | Out-Host
+$motherboard = Get-CimInstance -Class Win32_BaseBoard | Format-List Manufacturer, Product, SerialNumber, Version | Out-Host
 Write-Host $motherboard
+
+# $properties = @{}
+# Get-CimInstance -Class Win32_BaseBoard | ForEach-Object {
+#     $properties['manufacturer'] = $_.Manufacturer
+#     $properties['product'] = $_.Product
+#     $properties['serialNumber'] = $_.SerialNumber
+#     $properties['version'] = $_.Version
+# }
+# $motherboard = New-Object psobject $properties | ConvertTo-Json
+# Write-Host $motherboard

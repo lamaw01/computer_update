@@ -49,13 +49,31 @@
 # (Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).sum /1gb
 
 
-$motherboardManufacturer = (Get-CimInstance -Class Win32_BaseBoard).Manufacturer
-$motherboardProduct = (Get-CimInstance -Class Win32_BaseBoard).Product
-$motherboardSerial = (Get-CimInstance -Class Win32_BaseBoard).SerialNumber
-$motherboardVersion = (Get-CimInstance -Class Win32_BaseBoard).Version
+# $motherboardManufacturer = (Get-CimInstance -Class Win32_BaseBoard).Manufacturer
+# $motherboardProduct = (Get-CimInstance -Class Win32_BaseBoard).Product
+# $motherboardSerial = (Get-CimInstance -Class Win32_BaseBoard).SerialNumber
+# $motherboardVersion = (Get-CimInstance -Class Win32_BaseBoard).Version
 
 
-Write-Host $motherboardProduct
-Write-Host $motherboardManufacturer
-Write-Host $motherboardVersion
-Write-Host $motherboardSerial
+# Write-Host $motherboardProduct
+# Write-Host $motherboardManufacturer
+# Write-Host $motherboardVersion
+# Write-Host $motherboardSerial
+
+# $properties = @{}
+# Get-CimInstance Win32_OperatingSystem | ForEach-Object {
+#     $InstanceName = if($_.Path -match 'process\((.*#\d+)\)'){
+#         $Matches[1]
+#     } 
+#     else {
+#         $_.InstanceName
+#     }
+#     $properties[$InstanceName] = $_.CookedValue
+# }
+# New-Object psobject -Property $properties |ConvertTo-Json
+
+$properties = @{}
+Get-CimInstance Win32_Processor | ForEach-Object {
+    $properties['Name'] = $_.Name
+}
+New-Object psobject $properties | ConvertTo-Json

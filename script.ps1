@@ -2,40 +2,40 @@ $uuid = (Get-WmiObject -Class Win32_ComputerSystemProduct).UUID
 
 $hostname = (Get-CimInstance Win32_ComputerSystem).Name
 
-$os = Get-CimInstance Win32_OperatingSystem | Format-Table Caption, BuildNumber, Version, SystemDirectory
+$os = Get-CimInstance Win32_OperatingSystem | Format-Table Caption, BuildNumber, Version, SystemDirectory | Out-String 
 
-$defender = Get-MpComputerStatus | Format-Table AntivirusSignatureVersion, QuickScanSignatureVersion
+$defender = Get-MpComputerStatus | Format-Table AntivirusSignatureVersion, QuickScanSignatureVersion | Out-String 
 
-$cpu = Get-CimInstance Win32_Processor | Format-Table Name
+$cpu = Get-CimInstance Win32_Processor | Format-Table Name | Out-String 
+ 
+$motherboard = Get-CimInstance -Class Win32_BaseBoard | Format-Table Manufacturer, Product, SerialNumber, Version -Auto | Out-String 
 
-$motherboard = Get-CimInstance -Class Win32_BaseBoard | Format-Table Manufacturer, Product, SerialNumber, Version -Auto
+$ram = Get-CimInstance Win32_PhysicalMemory | Format-Table Manufacturer, SerialNumber, DeviceLocator, @{n="Size (GB)"; e={($_.Capacity/1GB)}; align="center"}, @{n="ClockSpeed (MHz)"; e={($_.ConfiguredClockSpeed)}; align="center"} -Auto | Out-String 
 
-$ram = Get-CimInstance Win32_PhysicalMemory | Format-Table Manufacturer, SerialNumber, DeviceLocator, @{n="Size (GB)"; e={($_.Capacity/1GB)}; align="center"}, @{n="ClockSpeed (MHz)"; e={($_.ConfiguredClockSpeed)}; align="center"} -Auto
+$storage =  Get-CimInstance Win32_LogicalDisk | Format-Table DeviceID, ProviderName, VolumeName, VolumeSerialNumber, HealthStatus, @{n="Size (GB)"; e={[math]::Round(($_.Size/1GB),2)}; align="center"}, @{n="FreeSpace (GB)"; e={[math]::Round(($_.FreeSpace/1GB),2)}; align="center"} | Out-String 
 
-$storage =  Get-CimInstance Win32_LogicalDisk | Format-Table DeviceID, ProviderName, VolumeName, VolumeSerialNumber, HealthStatus, @{n="Size (GB)"; e={[math]::Round(($_.Size/1GB),2)}; align="center"}, @{n="FreeSpace (GB)"; e={[math]::Round(($_.FreeSpace/1GB),2)}; align="center"}
+$user = Get-CimInstance Win32_ComputerSystem | Format-Table  Name, Username, Domain | Out-String 
 
-$user = Get-CimInstance Win32_ComputerSystem | Format-Table  Name, Username, Domain
-
-$network = Get-NetIPAddress | Format-Table IPAddress, PrefixLength, SuffixOrigin
+$network = Get-NetIPAddress | Format-Table IPAddress, PrefixLength, SuffixOrigin | Out-String 
 
 $monitor = Get-WmiObject WmiMonitorID -Namespace root\wmi | Format-Table -Property @(
     @{Name = 'Manufacturer'; Expression = {[string]::new([char[]]($_.Manufacturername)).Trim("`0") }; Alignment="center";}
     @{Name = 'Model'; Expression = { [string]::new([char[]]($_.UserFriendlyName)).Trim("`0")  };  Alignment="center";}
     @{Name = 'Serial'; Expression = { [string]::new([char[]]($_.SerialNumberID)).Trim("`0")  };  Alignment="center";}
-)
+) | Out-String 
 
 
-$uuid | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
-$hostname | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
-$os | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
-$defender | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
-$cpu | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
-$motherboard | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
-$ram | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
-$storage | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
-$user | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
-$network | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
-$monitor | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+# $uuid | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+# $hostname | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+# $os | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+# $defender | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+# $cpu | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+# $motherboard | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+# $ram | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+# $storage | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+# $user | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+# $network | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+# $monitor | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
 # Write-Host $uuid
 # Write-Host $hostname
 # Write-Host $os
@@ -48,23 +48,25 @@ $monitor | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
 # Write-Host $network
 # Write-Host $monitor
 
-# $body = @{
-#  "uuid"="$uuid"
-#  "hostname"="$hostname"
-#  "os"="$os"
-#  "defender"="$defender"
-#  "cpu"="$cpu"
-#  "motherboard"="$motherboard"
-#  "ram"="$ram"
-#  "storage"="$storage"
-#  "user"="$user"
-#  "network"="$network"
-#  "monitor"="$monitor"
-# } | ConvertTo-Json
+$body = @{
+ "uuid"="$uuid"
+ "hostname"="$hostname"
+ "os"="$os"
+ "defender"="$defender"
+ "cpu"="$cpu"
+ "motherboard"="$motherboard"
+ "ram"="$ram"
+ "storage"="$storage"
+ "user"="$user"
+ "network"="$network"
+ "monitor"="$monitor"
+} | ConvertTo-Json
+
+Write-Host $body
 
 # $header = @{
 #  "Accept"="*/*"
 #  "Content-Type"="application/json; charset=UTF-8"
 # }
 
-# Invoke-RestMethod -Uri "http://103.62.153.74:53000/script/insert_data.php" -Method 'Post' -Body $body -Headers $header | ConvertTo-Json
+# Invoke-RestMethod -Uri "http://192.168.221.21/computer_details/computer_detail_api/insert_computer_detail.php" -Method 'Post' -Body $body -Headers $header ConvertTo-Json
