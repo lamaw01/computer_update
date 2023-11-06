@@ -38,7 +38,12 @@ function Get-MonitorInfo {
             @{Name = 'Manufacturer'; Expression = {[string]::new([char[]]($_.Manufacturername)).Trim("`0") }; Alignment="left";}
             @{Name = 'Model'; Expression = { [string]::new([char[]]($_.UserFriendlyName)).Trim("`0")  };  Alignment="center";}
             @{Name = 'Serial'; Expression = { [string]::new([char[]]($_.SerialNumberID)).Trim("`0")  };  Alignment="center";}
+            @{Name = 'Width'; Expression = {(Get-CimInstance -ClassName CIM_VideoController).CurrentHorizontalResolution};  Alignment="center";}
+            @{Name = 'Heigth'; Expression = {(Get-CimInstance -ClassName CIM_VideoController).CurrentVerticalResolution};  Alignment="center";}
+            @{Name = 'Caption'; Expression = {(Get-CimInstance -ClassName CIM_VideoController).Caption};  Alignment="center";}
+          
         ) | Out-Host
         Write-Host $monitor
     }
 }
+Get-MonitorInfo

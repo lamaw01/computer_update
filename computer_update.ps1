@@ -113,4 +113,4 @@ Write-Host $osLastBootUpTime
 # # command to execute script
 # PowerShell.exe -File "C:\Projects\computer_update_script\computer_update.ps1" -ExecutionPolicy Bypass
 
-# schtasks /create /tn "computer_update" /sc onstart /delay 0005:00 /rl highest /ru system /tr "powershell.exe -file C:\computer_update.ps1"
+# schtasks /create /tn "computer_update" /sc onstart /delay 0005:00 /rl highest /ru system /tr "powershell.exe -file C:\script.ps1"

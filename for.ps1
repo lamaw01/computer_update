@@ -72,8 +72,56 @@
 # }
 # New-Object psobject -Property $properties |ConvertTo-Json
 
-$properties = @{}
-Get-CimInstance Win32_Processor | ForEach-Object {
-    $properties['Name'] = $_.Name
-}
-New-Object psobject $properties | ConvertTo-Json
+# $properties = @{}
+# Get-CimInstance Win32_Processor | ForEach-Object {
+#     $properties['Name'] = $_.Name
+# }
+# New-Object psobject $properties | ConvertTo-Json
+
+# (Get-CimInstance -ClassName CIM_VideoController).CurrentHorizontalResolution
+# (Get-CimInstance -ClassName CIM_VideoController).CurrentVerticalResolution
+# (Get-CimInstance -ClassName CIM_VideoController).Caption
+
+# [pscustomobject]@{
+#     DeviceName   = $screen.Caption
+#     Width        = $screen.CurrentHorizontalResolution
+#     Height       = $screen.CurrentVerticalResolution
+#     BitsPerPixel = $screen.CurrentBitsPerPixel
+# }
+
+# $header1 = @{
+#     "Accept"="*/*"
+#     "Content-Type"="application/json; charset=UTF-8"
+# }
+# $data = Invoke-RestMethod -Uri "http://192.168.221.21/computer_details/computer_detail_api/update_status.php" -Method 'Get' -Headers $header1
+# $update = $data | Select-Object -ExpandProperty "update"
+# # Write-Host $update
+# if($update -eq $true){
+#     Write-Host 'IF'
+# }else{
+#     Write-Host 'ELSE'
+# }
+# Invoke-WebRequest -Uri "http://192.168.221.21/computer_details/computer_detail_api/get_computer_detail.php" -UseBasicParsing | Select-Object StatusCode
+
+    # $uuid | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+    # $hostname | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+    # $network | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+    # $os | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+    # $defender | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+    # $cpu | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+    # $motherboard | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+    # $ram | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+    # $storage | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+    # $user | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+    # $monitor | Out-File -FilePath C:\Projects\computer_update_script\log.txt -Append
+    # Write-Host $uuid
+    # Write-Host $hostname
+    # Write-Host $os
+    # Write-Host $defender
+    # Write-Host $cpu
+    # Write-Host $motherboard
+    # Write-Host $ram
+    # Write-Host $storage
+    # Write-Host $user
+    # Write-Host $network
+    # Write-Host $monitor
