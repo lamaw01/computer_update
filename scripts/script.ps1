@@ -38,6 +38,12 @@ if($update -eq $true){
         @{Name = 'Caption'; Expression = {(Get-CimInstance -ClassName CIM_VideoController).Caption}}
     ) | Out-String).Trim()
 
+    $browser =
+    (@(
+        [pscustomobject]@{Name="Chrome";Version=(Get-Item (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe').'(Default)').VersionInfo.ProductVersion},
+        [pscustomobject]@{Name="MSEdge";Version=(Get-Item (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\msedge.exe').'(Default)').VersionInfo.ProductVersion}
+    ) | Format-List | Out-String).Trim()
+
     $body = @{
     "uuid"="$uuid"
     "hostname"="$hostname"
@@ -50,6 +56,7 @@ if($update -eq $true){
     "storage"="$storage"
     "user"="$user"
     "monitor"="$monitor"
+    "browser"="$browser"
     } | ConvertTo-Json
 
     Write-Host $body
