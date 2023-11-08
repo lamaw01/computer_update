@@ -3,7 +3,7 @@ $header1 = @{
     "Content-Type"="application/json; charset=UTF-8"
 }
 
-$data = Invoke-RestMethod -Uri "http://192.168.221.21/computer_details/computer_detail_api/update_status.php" -Method 'Get' -Headers $header1
+$data = Invoke-RestMethod -Uri "http://103.62.153.74:53000/computer_detail/update_status.php" -Method 'Get' -Headers $header1
 
 $update = $data | Select-Object -ExpandProperty "update"
 
@@ -66,6 +66,6 @@ if($update -eq $true){
         "Content-Type"="application/json; charset=UTF-8"
     }
 
-    Invoke-RestMethod -Uri "http://192.168.221.21/computer_details/computer_detail_api/insert_computer_detail.php" -Method 'Post' -Body $body -Headers $header2 | ConvertTo-Json
+    Invoke-RestMethod -Uri "http://103.62.153.74:53000/computer_detail/insert_computer_detail.php" -Method 'Post' -Body $body -Headers $header2 | ConvertTo-Json
 
 }
