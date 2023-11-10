@@ -3,9 +3,9 @@
 
 $properties = @{}
 Get-CimInstance -Class Win32_ComputerSystem | ForEach-Object {
-    $properties['name'] = $_.Name
-    $properties['username'] = $_.Username
-    $properties['domain'] = $_.Domain
+    $properties['Name'] = $_.Name
+    $properties['Username'] = $_.Username
+    $properties['Domain'] = $_.Domain
 }
 $user = New-Object psobject $properties | ConvertTo-Json
 Write-Host $user
