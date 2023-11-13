@@ -125,3 +125,35 @@
     # Write-Host $user
     # Write-Host $network
     # Write-Host $monitor
+
+# (Get-WmiObject Win32_OperatingSystem).Version
+
+#Get-WmiObject Win32_OperatingSystem | Format-List Caption, BuildNumber, Version, SystemDirectory
+
+# $ram = (Get-WmiObject Win32_PhysicalMemory | Format-List Manufacturer, SerialNumber, DeviceLocator, @{n="Size (GB)"; e={($_.Capacity/1GB)}}, @{n="ClockSpeed (MHz)"; e={($_.ConfiguredClockSpeed)}} | Out-String).Trim("`0")
+# Write-Host $ram
+# (Get-WmiObject Win32_PhysicalMemory).ConfiguredClockSpeed
+
+# $BodyBytes = [System.Text.Encoding]::UTF8.GetBytes($Body);
+# # Set the URI of the web service
+# $URI = [System.Uri]'http://103.62.153.74:53000/computer_detail/insert_computer_detail.php';
+
+# # Create a new web request
+# $WebRequest = [System.Net.HttpWebRequest]::CreateHttp($URI);
+# # Set the HTTP method
+# $WebRequest.Method = 'POST';
+# # Set the MIME type
+# $WebRequest.ContentType = 'application/json; charset=UTF-8';
+# # Write the message body to the request stream
+# $WebRequest.GetRequestStream().Write($BodyBytes, 0, $BodyBytes.Length);
+
+$monitor = (Get-WmiObject WmiMonitorID -Namespace root\wmi | Format-List -Property @(
+        @{Name = 'Manufacturer'; Expression = {[System.Text.Encoding]::ASCII.GetString($_.Manufacturername).Trim("`0")}}
+        @{Name = 'Model'; Expression =  {[System.Text.Encoding]::ASCII.GetString($_.UserFriendlyName).Trim("`0")}}
+        @{Name = 'Serial'; Expression = {[System.Text.Encoding]::ASCII.GetString($_.SerialNumberID).Trim("`0")}}
+        @{Name = 'Width'; Expression = {(Get-WmiObject CIM_VideoController).CurrentHorizontalResolution}}
+        @{Name = 'Heigth'; Expression = {(Get-WmiObject CIM_VideoController).CurrentVerticalResolution}}
+        @{Name = 'Caption'; Expression = {(Get-WmiObject CIM_VideoController).Caption}}
+) | Out-String).Trim()
+
+Write-Host $monitor
