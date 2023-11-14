@@ -147,13 +147,33 @@
 # # Write the message body to the request stream
 # $WebRequest.GetRequestStream().Write($BodyBytes, 0, $BodyBytes.Length);
 
-$monitor = (Get-WmiObject WmiMonitorID -Namespace root\wmi | Format-List -Property @(
-        @{Name = 'Manufacturer'; Expression = {[System.Text.Encoding]::ASCII.GetString($_.Manufacturername).Trim("`0")}}
-        @{Name = 'Model'; Expression =  {[System.Text.Encoding]::ASCII.GetString($_.UserFriendlyName).Trim("`0")}}
-        @{Name = 'Serial'; Expression = {[System.Text.Encoding]::ASCII.GetString($_.SerialNumberID).Trim("`0")}}
-        @{Name = 'Width'; Expression = {(Get-WmiObject CIM_VideoController).CurrentHorizontalResolution}}
-        @{Name = 'Heigth'; Expression = {(Get-WmiObject CIM_VideoController).CurrentVerticalResolution}}
-        @{Name = 'Caption'; Expression = {(Get-WmiObject CIM_VideoController).Caption}}
-) | Out-String).Trim()
+# $monitor = (Get-WmiObject WmiMonitorID -Namespace root\wmi | Format-List -Property @(
+#         @{Name = 'Manufacturer'; Expression = {[System.Text.Encoding]::ASCII.GetString($_.Manufacturername).Trim("`0")}}
+#         @{Name = 'Model'; Expression =  {[System.Text.Encoding]::ASCII.GetString($_.UserFriendlyName).Trim("`0")}}
+#         @{Name = 'Serial'; Expression = {[System.Text.Encoding]::ASCII.GetString($_.SerialNumberID).Trim("`0")}}
+#         @{Name = 'Width'; Expression = {(Get-WmiObject CIM_VideoController).CurrentHorizontalResolution}}
+#         @{Name = 'Heigth'; Expression = {(Get-WmiObject CIM_VideoController).CurrentVerticalResolution}}
+#         @{Name = 'Caption'; Expression = {(Get-WmiObject CIM_VideoController).Caption}}
+# ) | Out-String).Trim()
 
-Write-Host $monitor
+# Write-Host $monitor
+
+# wmic diskdrive get index, model, serialnumber, size
+
+# $drive_serialnumber = Get-Partition -DriveLetter C  | Get-Disk | select-object -ExpandProperty SerialNumber
+# $drive_serialnumber.trim()
+
+# $disk = (Get-PSDrive).Name -match '^[a-z]$'
+# Foreach ($i in $disk)
+# {
+# #   Write-Host $i". " -nonewline
+#   Get-Partition -DriveLetter $i | Get-Disk | Format-List Number, FriendlyName, SerialNumber, HealthStatus, Size
+# }
+
+# $storage = (Get-WMIObject Win32_DiskDrive | Format-List Name,Model,Description,SerialNumber,Size | Out-String).Trim()
+# # $storage2 = (Get-PhysicalDisk | Format-List FriendlyName, MediaType, HealthStatus | Out-String).Trim()
+# # $storage = $storage1 + "`r`n`r`n" + $storage2
+# Write-Host $storage
+
+$storage = (Get-WMIObject Win32_DiskDrive | Format-List Name, Model, Description, SerialNumber, @{n="Size (GB)"; e={[math]::Round(($_.Size/1GB),2)}} | Out-String).Trim()
+Write-Host $storage

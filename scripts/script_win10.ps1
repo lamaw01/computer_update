@@ -1,9 +1,9 @@
-$header1 = @{
+$header = @{
     "Accept"="*/*"
     "Content-Type"="application/json; charset=UTF-8"
 }
 
-$data = Invoke-RestMethod -Uri "http://103.62.153.74:53000/computer_detail/update_status.php" -Method 'Get' -Headers $header1
+$data = Invoke-RestMethod -Uri "http://103.62.153.74:53000/computer_detail/update_status.php" -Method 'Get' -Headers $header
 
 $update = $data | Select-Object -ExpandProperty "update"
 
@@ -25,19 +25,14 @@ if($update -eq $true){
 
     $ram = (Get-CimInstance Win32_PhysicalMemory | Format-List Manufacturer, SerialNumber, DeviceLocator, @{n="Size (GB)"; e={($_.Capacity/1GB)}}, @{n="ClockSpeed (MHz)"; e={($_.ConfiguredClockSpeed)}} | Out-String).Trim()
 
-    $storage1 = (Get-CimInstance Win32_LogicalDisk | Format-List DeviceID, VolumeName, VolumeSerialNumber, @{n="Size (GB)"; e={[math]::Round(($_.Size/1GB),2)};}, @{n="FreeSpace (GB)"; e={[math]::Round(($_.FreeSpace/1GB),2)}} | Out-String).Trim()
-    $storage2 = (Get-PhysicalDisk | Format-List FriendlyName, MediaType, HealthStatus | Out-String).Trim()
-    $storage = $storage1 + "`r`n`r`n" + $storage2
+    $storage = (Get-WMIObject Win32_DiskDrive | Format-List Name, Model, SerialNumber, @{n="Size (GB)"; e={[math]::Round(($_.Size/1GB),2)}} | Out-String).Trim()
 
     $user = (Get-CimInstance Win32_ComputerSystem | Format-List  Name, Username, Domain | Out-String).Trim()
 
     $monitor = (Get-WmiObject WmiMonitorID -Namespace root\wmi | Format-List -Property @(
         @{Name = 'Manufacturer'; Expression = {[string]::new([char[]]($_.Manufacturername)).Trim("`0")}}
-        @{Name = 'Model'; Expression = { [string]::new([char[]]($_.UserFriendlyName)).Trim("`0")  }}
-        @{Name = 'Serial'; Expression = { [string]::new([char[]]($_.SerialNumberID)).Trim("`0")  }}
-        @{Name = 'Width'; Expression = {(Get-CimInstance -ClassName CIM_VideoController).CurrentHorizontalResolution}}
-        @{Name = 'Heigth'; Expression = {(Get-CimInstance -ClassName CIM_VideoController).CurrentVerticalResolution}}
-        @{Name = 'Caption'; Expression = {(Get-CimInstance -ClassName CIM_VideoController).Caption}}
+        @{Name = 'Model'; Expression = {[string]::new([char[]]($_.UserFriendlyName)).Trim("`0")}}
+        @{Name = 'Serial'; Expression = {[string]::new([char[]]($_.SerialNumberID)).Trim("`0")}}
     ) | Out-String).Trim()
 
     $browser =
@@ -61,13 +56,5 @@ if($update -eq $true){
     "browser"="$browser"
     } | ConvertTo-Json
 
-    Write-Host $body
-
-    $header2 = @{
-        "Accept"="*/*"
-        "Content-Type"="application/json; charset=UTF-8"
-    }
-
-    Invoke-RestMethod -Uri "http://103.62.153.74:53000/computer_detail/insert_computer_detail.php" -Method 'Post' -Body $body -Headers $header2 | ConvertTo-Json
-
+    Invoke-RestMethod -Uri "http://103.62.153.74:53000/computer_detail/insert_computer_detail.php" -Method 'Post' -Body $body -Headers $header | ConvertTo-Json
 }
