@@ -9,7 +9,7 @@ $input = json_decode($inputJSON, TRUE);
 if($_SERVER['REQUEST_METHOD'] == 'GET'){
 
     // query insert new machine details
-    $sql= 'SELECT * FROM tbl_computer_details WHERE id IN (SELECT Max(id) FROM tbl_computer_details GROUP BY hostname) ORDER BY hostname ASC;';
+    $sql= 'SELECT * FROM tbl_update ORDER BY id ASC';
 
     try {
         $set=$conn->prepare("SET SQL_MODE=''");
@@ -29,6 +29,3 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
     echo json_encode(array('success'=>false,'message'=>'Error input'));
     die();
 }
-
-
-// SELECT MAX(id) as id,uuid,hostname,os,defender,cpu,motherboard,ram,storage,user,network,monitor,time_stamp FROM tbl_computer_details GROUP BY hostname ORDER BY id DESC;

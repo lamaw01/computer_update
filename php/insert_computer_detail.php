@@ -18,12 +18,16 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $user = $input['user'];
     $network = $input['network'];
     $monitor = $input['monitor'];
+    $browser = $input['browser'];
 
     // query insert new machine details
-    $insert_sql= 'INSERT INTO tbl_computer_details(uuid,hostname,os,defender,cpu,motherboard,ram,storage,user,network,monitor)
-    VALUES (:uuid,:hostname,:os,:defender,:cpu,:motherboard,:ram,:storage,:user,:network,:monitor)';
+    $insert_sql= 'INSERT INTO tbl_computer_details(uuid,hostname,os,defender,cpu,motherboard,ram,storage,user,network,monitor,browser)
+    VALUES (:uuid,:hostname,:os,:defender,:cpu,:motherboard,:ram,:storage,:user,:network,:monitor,:browser)';
 
     try {
+        $set=$conn->prepare("SET SQL_MODE=''");
+        $set->execute();
+
         $sql_insert = $conn->prepare($insert_sql);
         $sql_insert->bindParam(':uuid', $uuid, PDO::PARAM_STR);
         $sql_insert->bindParam(':hostname', $hostname, PDO::PARAM_STR);
@@ -36,6 +40,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         $sql_insert->bindParam(':user', $user, PDO::PARAM_STR);
         $sql_insert->bindParam(':network', $network, PDO::PARAM_STR);
         $sql_insert->bindParam(':monitor', $monitor, PDO::PARAM_STR);
+        $sql_insert->bindParam(':browser', $browser, PDO::PARAM_STR);
         $sql_insert->execute();
         echo json_encode(array('success'=>true,'message'=>'insert'));
     } catch (PDOException $e) {
