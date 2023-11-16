@@ -3,11 +3,20 @@ $header = @{
     "Content-Type"="application/json; charset=UTF-8"
 }
 
-$data = Invoke-RestMethod -Uri "http://103.62.153.74:53000/computer_detail/update_status.php" -Method 'Get' -Headers $header
+# check if we update code and if we get computer detail
+$update_status = Invoke-RestMethod -Uri "http://103.62.153.74:53000/computer_detail/get_update_latest.php" -Method 'Get' -Headers $header
 
-$update = $data | Select-Object -ExpandProperty "update"
+$update_code = $update_status | Select-Object -ExpandProperty "update_code"
 
-if($update -eq $true){
+# update code script
+if($update_code -eq 1){
+    Invoke-WebRequest -Uri 'http://103.62.153.74:53000/computer_detail/script_win10.ps1' -OutFile 'C:/script_win10.ps1'
+}
+
+$status = $update_status | Select-Object -ExpandProperty "status"
+
+# get computer detail
+if($status -eq 1){
 
     $uuid = (Get-WmiObject -Class Win32_ComputerSystemProduct).UUID
 
