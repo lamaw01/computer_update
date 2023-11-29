@@ -175,5 +175,15 @@
 # # $storage = $storage1 + "`r`n`r`n" + $storage2
 # Write-Host $storage
 
-$storage = (Get-WMIObject Win32_DiskDrive | Format-List Name, Model, Description, SerialNumber, @{n="Size (GB)"; e={[math]::Round(($_.Size/1GB),2)}} | Out-String).Trim()
-Write-Host $storage
+# $storage = (Get-WMIObject Win32_DiskDrive | Format-List Name, Model, Description, SerialNumber, @{n="Size (GB)"; e={[math]::Round(($_.Size/1GB),2)}} | Out-String).Trim()
+# Write-Host $storage
+
+# Get-ItemProperty 'HKEY_CLASSES_ROOT\Word.Application\CurVer'
+# $officeCheck = (Get-ItemProperty -Path "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Office\14.0\Outlook")
+# Write-Host $officeCheck
+
+# (New-Object -ComObject word.application).version
+
+# Get-ItemProperty -Path 'HKLM:Software\Classes\Word.Application\CurVer'.('(Default)')
+$msoffice = ((Get-Item 'C:\Program Files (x86)\Microsoft Office\Office14\WINWORD.exe').VersionInfo | Format-List ProductVersion | Out-String).Trim()
+Write-Host $msoffice

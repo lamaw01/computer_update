@@ -1,5 +1,5 @@
 <?php
-require '../db_connect.php';
+require 'db_connect.php';
 header('Content-Type: application/json; charset=utf-8');
 
 // make input json
@@ -19,14 +19,29 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $network = $input['network'];
     $monitor = $input['monitor'];
     $browser = $input['browser'];
+    $msoffice = $input['msoffice'];
+
+    $last_id_sql = 'SELECT * FROM tbl_update ORDER BY id DESC LIMIT 1;';
 
     // query insert new machine details
-    $insert_sql= 'INSERT INTO tbl_computer_details(uuid,hostname,os,defender,cpu,motherboard,ram,storage,user,network,monitor,browser)
-    VALUES (:uuid,:hostname,:os,:defender,:cpu,:motherboard,:ram,:storage,:user,:network,:monitor,:browser)';
+    $insert_sql = 'INSERT INTO tbl_computer_details(uuid,hostname,os,defender,cpu,motherboard,ram,storage,user,network,monitor,browser,msoffice,update_id)
+    VALUES (:uuid,:hostname,:os,:defender,:cpu,:motherboard,:ram,:storage,:user,:network,:monitor,:browser,:msoffice,:update_id)';
 
     try {
-        $set=$conn->prepare("SET SQL_MODE=''");
-        $set->execute();
+        // $set=$conn->prepare("SET SQL_MODE=''");
+        // $set->execute();
+
+        // $get_last_id = $conn->prepare($last_id_sql);
+        // $get_last_id->execute();
+        // $result_get_last_id = $get_last_id->fetch(PDO::FETCH_ASSOC);
+        // $update_id = $result_get_last_id["id"]
+        // echo json_encode($update_id);
+
+        $get_sql = $conn->prepare($last_id_sql);
+        $get_sql->execute();
+        $result_get_sql = $get_sql->fetch(PDO::FETCH_ASSOC);
+        $update_id = $result_get_sql["id"];
+        // echo json_encode($result_get_sql["id"]);
 
         $sql_insert = $conn->prepare($insert_sql);
         $sql_insert->bindParam(':uuid', $uuid, PDO::PARAM_STR);
@@ -41,6 +56,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         $sql_insert->bindParam(':network', $network, PDO::PARAM_STR);
         $sql_insert->bindParam(':monitor', $monitor, PDO::PARAM_STR);
         $sql_insert->bindParam(':browser', $browser, PDO::PARAM_STR);
+        $sql_insert->bindParam(':msoffice', $msoffice, PDO::PARAM_STR);
+        $sql_insert->bindParam(':update_id', $update_id, PDO::PARAM_INT);
         $sql_insert->execute();
         echo json_encode(array('success'=>true,'message'=>'insert'));
     } catch (PDOException $e) {

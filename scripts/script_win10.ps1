@@ -38,6 +38,8 @@ if($status -eq 1){
 
     $user = (Get-CimInstance Win32_ComputerSystem | Format-List  Name, Username, Domain | Out-String).Trim()
 
+    $msoffice = ((Get-Item 'C:\Program Files (x86)\Microsoft Office\Office14\WINWORD.exe').VersionInfo | Format-List ProductVersion | Out-String).Trim()
+
     $monitor = (Get-WmiObject WmiMonitorID -Namespace root\wmi | Format-List -Property @(
         @{Name = 'Manufacturer'; Expression = {[string]::new([char[]]($_.Manufacturername)).Trim("`0")}}
         @{Name = 'Model'; Expression = {[string]::new([char[]]($_.UserFriendlyName)).Trim("`0")}}
@@ -46,8 +48,8 @@ if($status -eq 1){
 
     $browser =
     (@(
-        [pscustomobject]@{Name="Chrome";Version=(Get-Item (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe').'(Default)').VersionInfo.ProductVersion},
-        [pscustomobject]@{Name="MSEdge";Version=(Get-Item (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\msedge.exe').'(Default)').VersionInfo.ProductVersion}
+        [pscustomobject]@{Chrome=(Get-Item (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe').'(Default)').VersionInfo.ProductVersion},
+        [pscustomobject]@{MSEdge=(Get-Item (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\msedge.exe').'(Default)').VersionInfo.ProductVersion}
     ) | Format-List | Out-String).Trim()
 
     $body = @{
@@ -63,6 +65,7 @@ if($status -eq 1){
     "user"="$user"
     "monitor"="$monitor"
     "browser"="$browser"
+    "msoffice"="$msoffice"
     } | ConvertTo-Json
 
     Invoke-RestMethod -Uri "http://103.62.153.74:53000/computer_detail/insert_computer_detail.php" -Method 'Post' -Body $body -Headers $header | ConvertTo-Json
