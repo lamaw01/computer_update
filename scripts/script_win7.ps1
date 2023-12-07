@@ -58,6 +58,8 @@ if($obj.status -eq 1){
         Name = "Chrome"
         Version = (Get-Item (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe').'(Default)').VersionInfo.ProductVersion
     }) | Format-List | Out-String).Trim()
+
+    $msoffice = ((Get-Item 'C:\Program Files (x86)\Microsoft Office\Office14\WINWORD.exe').VersionInfo | Format-List ProductVersion | Out-String).Trim()
     
     $json = @{
         "uuid"="$uuid"
@@ -72,6 +74,7 @@ if($obj.status -eq 1){
         "user"="$user"
         "monitor"="$monitor"
         "browser"="$browser"
+        "msoffice"="$msoffice"
     }
 
     $covJson = ConvertTo-Json $json
