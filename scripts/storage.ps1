@@ -25,14 +25,14 @@
 # $storage = $storage1 + "`r`n`r`n" + $storage2
 # Write-Host $storage
 
-$storagekd = [PSCustomObject]@{}
+# $storagekd = [PSCustomObject]@{}
 
-Get-CimInstance Win32_LogicalDisk | ForEach-Object {
-    # $_.DeviceID
-    # $_.VolumeSerialNumber
+# Get-CimInstance Win32_LogicalDisk | ForEach-Object {
+#     # $_.DeviceID
+#     # $_.VolumeSerialNumber
 
-    $storagekd | Add-Member -MemberType NoteProperty -Name "DeviceID" -Value $_.DeviceID -Force
-}
+#     $storagekd | Add-Member -MemberType NoteProperty -Name "DeviceID" -Value $_.DeviceID -Force
+# }
 
 # $browser =
 #     (@(
@@ -41,4 +41,17 @@ Get-CimInstance Win32_LogicalDisk | ForEach-Object {
 #         [pscustomobject]@{name="Firefox";version=(New-Object -ComObject WScript.Shell).RegRead("HKLM\SOFTWARE\Mozilla\Mozilla Firefox\CurrentVersion")}
 #     ) | Format-List | Out-String).Trim()
 
-Write-Host $storagekd
+# Write-Host $storagekd
+
+# Get-PhysicalDisk |ft 
+
+# $storage1 = (Get-WMIObject Win32_DiskDrive | Format-List Name, Model, SerialNumber, @{n="Size (GB)"; e={[math]::Round(($_.Size/1GB),2)}} | Out-String).Trim()
+# $storage2 = (Get-PhysicalDisk | Format-List FriendlyName, @{n="Size (GB)"; e={[math]::Round(($_.Size/1GB),2)};}, MediaType, HealthStatus | Out-String).Trim()
+# $storage2 = (Get-PhysicalDisk | Format-List MediaType | Out-String).Trim()
+
+# $storage1 = (Get-WMIObject Win32_DiskDrive | Format-List Name, Model, SerialNumber, @{n="Size (GB)"; e={[math]::Round(($_.Size/1GB),2)}} | Out-String).Trim()
+
+$storage2 = (Get-PhysicalDisk | Format-List FriendlyName, SerialNumber, @{n="Size (GB)"; e={[math]::Round(($_.Size/1GB),2)}}, MediaType, HealthStatus | Out-String).Trim()
+
+# Write-Host $storage1
+Write-Host $storage2
