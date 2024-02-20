@@ -12,6 +12,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $os = $input['os'];
     $defender = $input['defender'];
     $cpu = $input['cpu'];
+    $gpu = $input['gpu'];
     $motherboard = $input['motherboard'];
     $ram = $input['ram'];
     $storage = $input['storage'];
@@ -23,8 +24,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
     $last_id_sql = 'SELECT * FROM tbl_update ORDER BY id DESC LIMIT 1;';
 
-    $insert_sql = 'INSERT INTO tbl_computer_details(uuid,hostname,os,defender,cpu,motherboard,ram,storage,user,network,monitor,browser,msoffice,update_id)
-    VALUES (:uuid,:hostname,:os,:defender,:cpu,:motherboard,:ram,:storage,:user,:network,:monitor,:browser,:msoffice,:update_id)';
+    $insert_sql = 'INSERT INTO tbl_computer_details(uuid,hostname,os,defender,cpu,gpu,motherboard,ram,storage,user,network,monitor,browser,msoffice,update_id)
+    VALUES (:uuid,:hostname,:os,:defender,:cpu,:gpu,:motherboard,:ram,:storage,:user,:network,:monitor,:browser,:msoffice,:update_id)';
 
     $update_hostname_sql = 'UPDATE tbl_computer_details SET hostname=:hostname WHERE uuid=:uuid';
 
@@ -40,8 +41,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         $result_get_latest_hostname_sql = $get_latest_hostname_sql->fetch(PDO::FETCH_ASSOC);
         $latest_hostname = $result_get_latest_hostname_sql["hostname"];
         // echo json_encode($latest_hostname);
+        // $value = !is_null($latest_hostname);
+        // var_dump($value);
 
-        if($latest_hostname != $hostname){
+        if(!is_null($latest_hostname) && $latest_hostname != $hostname){
             $sql_update = $conn->prepare($update_hostname_sql);
             $sql_update->bindParam(':hostname', $hostname, PDO::PARAM_STR);
             $sql_update->bindParam(':uuid', $uuid, PDO::PARAM_STR);
@@ -59,6 +62,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
             $sql_insert->bindParam(':os', $os, PDO::PARAM_STR);
             $sql_insert->bindParam(':defender', $defender, PDO::PARAM_STR);
             $sql_insert->bindParam(':cpu', $cpu, PDO::PARAM_STR);
+            $sql_insert->bindParam(':gpu', $gpu, PDO::PARAM_STR);
             $sql_insert->bindParam(':motherboard', $motherboard, PDO::PARAM_STR);
             $sql_insert->bindParam(':ram', $ram, PDO::PARAM_STR);
             $sql_insert->bindParam(':storage', $storage, PDO::PARAM_STR);

@@ -30,6 +30,8 @@ if($status -eq 1){
 
     $cpu = (Get-CimInstance -Class Win32_Processor | Format-List Name, @{n="ClockSpeed (Ghz)"; e={[math]::Round(($_.CurrentClockSpeed/1000),2)}}, NumberOfCores, NumberOfLogicalProcessors, SerialNumber | Out-String).Trim()
 
+    $gpu = (Get-WmiObject Win32_VideoController | Format-List DeviceID, Name, VideoProcessor, @{n="AdapterRAM (GB)"; e={[math]::Round(($_.AdapterRAM/1GB),2)}} | Out-String).Trim()
+
     $motherboard = (Get-CimInstance -Class Win32_BaseBoard | Format-List Manufacturer, Product, SerialNumber, Version | Out-String).Trim()
 
     $ram = (Get-CimInstance Win32_PhysicalMemory | Format-List Manufacturer, SerialNumber, DeviceLocator, @{n="Size (GB)"; e={($_.Capacity/1GB)}}, @{n="ClockSpeed (MHz)"; e={($_.ConfiguredClockSpeed)}} | Out-String).Trim()
@@ -61,6 +63,7 @@ if($status -eq 1){
     "os"="$os"
     "defender"="$defender"
     "cpu"="$cpu"
+    "gpu"="$gpu"
     "motherboard"="$motherboard"
     "ram"="$ram"
     "storage"="$storage"
