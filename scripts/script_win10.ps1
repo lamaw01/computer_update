@@ -5,12 +5,14 @@ $header = @{
 
 $update_code = 0
 $status = 0
+$id = 0
 
 try {
     # check if we update code and if we get computer detail
     $update_status = Invoke-RestMethod -ErrorAction Stop -Uri "http://103.62.153.74:53000/computer_detail/get_update_latest.php" -Method 'Get' -Headers $header
     $update_code = $update_status | Select-Object -ExpandProperty "update_code"
     $status = $update_status | Select-Object -ExpandProperty "status"
+    $id = $update_status | Select-Object -ExpandProperty "id"
 }
 catch {
     Write-Host 'Error update_status'
@@ -187,11 +189,34 @@ if($status -eq 1){
 
     # Write-Host $body
 
+    $computer_latest_update_id = 0
+
     try {
-        Invoke-RestMethod -ErrorAction Stop -Uri "http://103.62.153.74:53000/computer_detail/insert_computer_detail.php" -Method 'Post' -Body $body -Headers $header | ConvertTo-Json
+        $body_hostname = @{
+        "hostname"="$hostname"
+        } | ConvertTo-Json 
+
+        #http://103.62.153.74:53000/computer_detail/get_computer_latest_update_id.php
+        $query_latest_id = Invoke-RestMethod -ErrorAction Stop -Uri "http://103.62.153.74:53000/computer_detail/get_computer_latest_update_id.php" -Method 'Post' -Body $body_hostname -Headers $header
+        $computer_latest_update_id = $query_latest_id | Select-Object -ExpandProperty "update_id"
     }
     catch {
-        Write-Host 'Error inserting data'
+        Write-Host 'Error get latest computer update id'
         Write-Host $_
     }
+
+    Write-Host $id . $computer_latest_update_id
+
+    if($id -ne $computer_latest_update_id){
+        try {
+            Invoke-RestMethod -ErrorAction Stop -Uri "http://103.62.153.74:53000/computer_detail/insert_computer_detail.php" -Method 'Post' -Body $body -Headers $header | ConvertTo-Json
+        }
+        catch {
+            Write-Host 'Error inserting data'
+            Write-Host $_
+        }
+    }
 }
+        
+
+
