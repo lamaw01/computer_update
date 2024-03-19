@@ -205,7 +205,7 @@ if($status -eq 1){
         Write-Host $_
     }
 
-    Write-Host $id . $computer_latest_update_id
+    #Write-Host $id . $computer_latest_update_id
 
     if($id -ne $computer_latest_update_id){
         try {
@@ -217,6 +217,4 @@ if($status -eq 1){
         }
     }
 }
-        
-
 
