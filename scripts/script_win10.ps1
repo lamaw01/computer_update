@@ -4,6 +4,7 @@ $header = @{
 }
 
 $update_code = 0
+$update_once = 0
 $status = 0
 $id = 0
 
@@ -11,6 +12,7 @@ try {
     # check if we update code and if we get computer detail
     $update_status = Invoke-RestMethod -ErrorAction Stop -Uri "http://103.62.153.74:53000/computer_detail/get_update_latest.php" -Method 'Get' -Headers $header
     $update_code = $update_status | Select-Object -ExpandProperty "update_code"
+    $update_once = $update_status | Select-Object -ExpandProperty "update_once"
     $status = $update_status | Select-Object -ExpandProperty "status"
     $id = $update_status | Select-Object -ExpandProperty "id"
 }
@@ -206,8 +208,24 @@ if($status -eq 1){
     }
 
     #Write-Host $id . $computer_latest_update_id
+    #update
+    #7 != 8
+    #1 == 0
 
-    if($id -ne $computer_latest_update_id){
+    #update
+    #7 != 8
+    #0 == 0
+    
+    #not update
+    #8 != 8
+    #0 != 0
+
+    #update
+    #8 != 8
+    #1 != 0
+    Write-Host $id . $computer_latest_update_id . $update_once . 0
+
+    if(($id -ne $computer_latest_update_id) -or ($update_once -eq 0)){
         try {
             Invoke-RestMethod -ErrorAction Stop -Uri "http://103.62.153.74:53000/computer_detail/insert_computer_detail.php" -Method 'Post' -Body $body -Headers $header | ConvertTo-Json
         }

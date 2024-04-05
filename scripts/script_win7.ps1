@@ -39,6 +39,8 @@ if($obj.status -eq 1){
     $defender = (Get-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*", "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where-Object { $_.DisplayName -eq "Avast Free Antivirus" } | Select-Object DisplayName, DisplayVersion | Format-List | Out-String).Trim()
     
     $cpu = (Get-WMIObject win32_Processor | Format-List Name, @{n="ClockSpeed (Ghz)"; e={[math]::Round(($_.CurrentClockSpeed/1000),2)}}, NumberOfCores, NumberOfLogicalProcessors, SerialNumber | Out-String).Trim()
+
+    $gpu = (Get-WmiObject Win32_VideoController | Format-List DeviceID, Name, VideoProcessor, @{n="AdapterRAM (GB)"; e={[math]::Round(($_.AdapterRAM/1GB),2)}} | Out-String).Trim()
     
     $motherboard = (Get-WMIObject Win32_BaseBoard | Format-List Manufacturer, Product, SerialNumber, Version | Out-String).Trim()
     
@@ -68,6 +70,7 @@ if($obj.status -eq 1){
         "os"="$os"
         "defender"="$defender"
         "cpu"="$cpu"
+        "gpu"="$gpu"
         "motherboard"="$motherboard"
         "ram"="$ram"
         "storage"="$storage"
