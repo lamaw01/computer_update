@@ -38,6 +38,7 @@ if($status -eq 1){
     $uuid = ""
     $hostname = ""
     $network = ""
+    $mac = ""
     $os = ""
     $defender = ""
     $cpu = ""
@@ -71,6 +72,14 @@ if($status -eq 1){
     }
     catch {
         Write-Host 'Error getting network'
+        Write-Host $_
+    }
+
+    try {
+        $mac = (Get-WmiObject Win32_NetworkAdapterConfiguration | Select-Object -ExpandProperty MacAddress).Trim()
+    }
+    catch {
+        Write-Host 'Error getting mac'
         Write-Host $_
     }
 
@@ -176,6 +185,7 @@ if($status -eq 1){
     "uuid"="$uuid"
     "hostname"="$hostname"
     "network"="$network"
+    "mac"="$mac"
     "os"="$os"
     "defender"="$defender"
     "cpu"="$cpu"
@@ -223,7 +233,7 @@ if($status -eq 1){
     #update
     #8 != 8
     #1 != 0
-    Write-Host $id . $computer_latest_update_id . $update_once . 0
+    # Write-Host $id . $computer_latest_update_id . $update_once . 0
 
     if(($id -ne $computer_latest_update_id) -or ($update_once -eq 0)){
         try {
