@@ -82,7 +82,7 @@ if($obj.status -eq 1){
     }
 
     try {
-        $mac = (Get-WmiObject Win32_NetworkAdapterConfiguration | Select-Object -ExpandProperty MacAddress).Trim()
+        $mac = (Get-NetIPConfiguration | Select-Object @{n='MacAddress'; e={$_.NetAdapter.MacAddress}})
     }
     catch {
         Write-Host 'Error getting mac'
