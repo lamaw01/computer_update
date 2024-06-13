@@ -9,6 +9,8 @@
 
 # $mac = Get-NetIPConfiguration | Select-Object @{n='MacAddress'; e={$_.NetAdapter.MacAddress}}
 
-$mac = (Get-NetIPConfiguration | Select-Object @{n='MacAddress'; e={$_.NetAdapter.MacAddress}})
+# $mac = (Get-NetIPConfiguration | Select-Object -ExpandProperty NetAdapter)
+
+$mac = (Get-NetIPConfiguration  | Select-Object @{n='MacAddress'; e={$_.NetAdapter.MacAddress}} | Out-String).Trim()
 
 Write-Host $mac
