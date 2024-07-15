@@ -150,7 +150,11 @@ if($status -eq 1){
     }
 
     try {
-        $msoffice = ((Get-Item 'C:\Program Files (x86)\Microsoft Office\Office14\WINWORD.exe' -ErrorAction Stop).VersionInfo | Format-List ProductVersion | Out-String).Trim()
+        $Keys = Get-Item -Path HKLM:\Software\RegisteredApplications | Select-Object -ExpandProperty property
+        $Product = $Keys | Where-Object {$_ -Match "Excel.Application."}
+        $OfficeVersion = ($Product.Replace("Excel.Application.","")+".0")
+        $msoffice = ($OfficeVersion | Out-String).Trim()
+        # $msoffice = ((Get-Item 'C:\Program Files (x86)\Microsoft Office\Office14\WINWORD.exe' -ErrorAction Stop).VersionInfo | Format-List ProductVersion | Out-String).Trim()
     }
     catch {
         Write-Host 'Error getting msoffice'
