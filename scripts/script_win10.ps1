@@ -237,7 +237,7 @@ if($status -eq 1){
     #update
     #8 != 8
     #1 != 0
-    # Write-Host $id . $computer_latest_update_id . $update_once . 0
+    Write-Host $id . $computer_latest_update_id . $update_once . 0
 
     if(($id -ne $computer_latest_update_id) -or ($update_once -eq 0)){
         try {
