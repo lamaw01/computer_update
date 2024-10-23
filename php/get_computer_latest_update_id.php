@@ -10,7 +10,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $hostname = $input['hostname'];
 
     // query get computer latest update id
-    $sql = 'SELECT update_id FROM tbl_computer_details WHERE hostname = :hostname ORDER BY update_id DESC LIMIT 1;';
+    $sql = 'SELECT update_id FROM tbl_computer_details WHERE hostname = :hostname ORDER BY id DESC LIMIT 1;';
 
     try {
         $set=$conn->prepare("SET SQL_MODE=''");

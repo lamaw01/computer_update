@@ -1,53 +1,4 @@
-
-try{
-    # check if we update code and if we get computer detail
-    $req = [System.Net.WebRequest]::Create("https://konek.parasat.tv:53000/computer_detail/get_update_latest.php")
-    $resp = $req.GetResponse()
-    $reqstream = $resp.GetResponseStream()
-    $stream = new-object System.IO.StreamReader $reqstream
-    $result = $stream.ReadToEnd()
-    [System.Reflection.Assembly]::LoadWithPartialName("System.Web.Extensions")
-    $ser = New-Object System.Web.Script.Serialization.JavaScriptSerializer
-    $obj = $ser.DeserializeObject($result)
-}
-catch {
-    Write-Host 'Error update_status'
-    Write-Host $_
-}
-
-function ConvertTo-Json([object] $item){
-    add-type -assembly system.web.extensions
-    $ps_js=new-object system.web.script.serialization.javascriptSerializer
-    return $ps_js.Serialize($item)
-}
-
-function ConvertFrom-Json([object] $item){ 
-    add-type -assembly system.web.extensions
-    $ps_js=new-object system.web.script.serialization.javascriptSerializer
-    #The comma operator is the array construction operator in PowerShell
-    return ,$ps_js.DeserializeObject($item)
-}
-
-$update_code = 0
-$update_once = 0
-$status = 0
-$id = 0
-
-$update_code = $obj.update_code
-$update_once = $obj.update_once
-$status = $obj.status
-$id = $obj.id
-
-# update code script
-if($update_code -eq 1){ # $obj.update_code -eq 1
-    try{
-        (new-object System.Net.WebClient).DownloadFile('https://konek.parasat.tv:53000/computer_detail/script_win7.ps1','C:/script_win7.ps1')
-    }
-    catch {
-        Write-Host 'Error update_code'
-        Write-Host $_
-    }
-}
+$status = 1
 
 # get computer detail
 if($status -eq 1){
@@ -196,105 +147,48 @@ if($status -eq 1){
         Write-Host $_
     }
 
+    # $json = @{
+    # "uuid"="$uuid"
+    # "hostname"="$hostname"
+    # "network"="$network"
+    # "mac"="$mac"
+    # "os"="$os"
+    # "defender"="$defender"
+    # "cpu"="$cpu"
+    # "gpu"="$gpu"
+    # "motherboard"="$motherboard"
+    # "ram"="$ram"
+    # "storage"="$storage"
+    # "user"="$user"
+    # "monitor"="$monitor"
+    # "browser"="$browser"
+    # "msoffice"="$msoffice"
+    # }
 
-    $computer_latest_update_id = 0
+    # Define the path to the text file
+$filePath = "C:\$hostname.txt"
 
-    $body_hostname = @{
-        "hostname"="$hostname"
-    }
+# Define the strings you want to write
+$strings = @(
+    "uuid : $uuid", 
+    "hostname: $hostname", 
+    "network: $network" , 
+    "mac: $mac", 
+    "os: $os", 
+    "defender: $defender", 
+    "cpu: $cpu",
+    "gpu: $gpu",
+    "motherboard: $motherboard",
+    "ram: $ram",
+    "storage: $storage",
+    "user: $user",
+    "monitor: $monitor",
+    "browser: $browser",
+    "msoffice: $msoffice"
+    )
 
-    $covbody_hostname = ConvertTo-Json $body_hostname
-
-    $resultbody = @{}
-    
-    try{
-        $request = [System.Net.WebRequest]::Create('https://konek.parasat.tv:53000/computer_detail/get_computer_latest_update_id.php')
-        $request.Method = 'POST'
-        $request.ContentType = 'application/json'
-        $request.Accept = "application/json"
-        
-        $body = [byte[]][char[]]$covbody_hostname
-        $upload = $request.GetRequestStream()
-        $upload.Write($body, 0, $body.Length)
-        $upload.Flush()
-        $upload.Close()
-    
-        $response = $request.GetResponse()
-        $stream = $response.GetResponseStream()
-        $streamReader = [System.IO.StreamReader]($stream)
-    
-        $resultbody['StatusCode']        = $response.StatusCode
-        $resultbody['StatusDescription'] = $response.StatusDescription
-        $resultbody['Content']           = $streamReader.ReadToEnd()
-    
-        $streamReader.Close()
-        $response.Close()
-    }
-    catch{
-        throw
-    }
-    
-
-    $y = $resultbody['Content']
-    $objy = $ser.DeserializeObject($y)
-    $computer_latest_update_id = $objy.update_id
-
-    #Write-Host $computer_latest_update_id
-
-    $json = @{
-    "uuid"="$uuid"
-    "hostname"="$hostname"
-    "network"="$network"
-    "mac"="$mac"
-    "os"="$os"
-    "defender"="$defender"
-    "cpu"="$cpu"
-    "gpu"="$gpu"
-    "motherboard"="$motherboard"
-    "ram"="$ram"
-    "storage"="$storage"
-    "user"="$user"
-    "monitor"="$monitor"
-    "browser"="$browser"
-    "msoffice"="$msoffice"
-    }
-
-    Write-Host $id . $computer_latest_update_id . $update_once . 0
-
-    if(($id -ne $computer_latest_update_id) -or ($update_once -eq 0)){
-
-        $covJson = ConvertTo-Json $json
-            
-        $result = @{}
-        try{
-            $request = [System.Net.WebRequest]::Create('https://konek.parasat.tv:53000/computer_detail/insert_computer_detail.php')
-            $request.Method = 'POST'
-            $request.ContentType = 'application/json'
-            $request.Accept = "application/json"
-            
-            $body = [byte[]][char[]]$covJson
-            $upload = $request.GetRequestStream()
-            $upload.Write($body, 0, $body.Length)
-            $upload.Flush()
-            $upload.Close()
-        
-            $response = $request.GetResponse()
-            $stream = $response.GetResponseStream()
-            $streamReader = [System.IO.StreamReader]($stream)
-        
-            $result['StatusCode']        = $response.StatusCode
-            $result['StatusDescription'] = $response.StatusDescription
-            $result['Content']           = $streamReader.ReadToEnd()
-        
-            $streamReader.Close()
-            $response.Close()
-        }
-        catch{
-            throw
-        }
-        
-        $x = $result.Content
-        Write-Host $x
-    }
-
+# Loop through each string and append it to the text file
+foreach ($string in $strings) {
+    Add-Content -Path $filePath -Value $string
+}
 }

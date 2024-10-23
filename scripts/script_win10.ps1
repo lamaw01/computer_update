@@ -10,7 +10,7 @@ $id = 0
 
 try {
     # check if we update code and if we get computer detail
-    $update_status = Invoke-RestMethod -ErrorAction Stop -Uri "http://103.62.153.74:53000/computer_detail/get_update_latest.php" -Method 'Get' -Headers $header
+    $update_status = Invoke-RestMethod -ErrorAction Stop -Uri "https://konek.parasat.tv:53000/computer_detail/get_update_latest.php" -Method 'Get' -Headers $header
     $update_code = $update_status | Select-Object -ExpandProperty "update_code"
     $update_once = $update_status | Select-Object -ExpandProperty "update_once"
     $status = $update_status | Select-Object -ExpandProperty "status"
@@ -24,7 +24,7 @@ catch {
 # update code script
 if($update_code -eq 1){
     try {
-        Invoke-WebRequest -ErrorAction Stop -Uri 'http://103.62.153.74:53000/computer_detail/script_win10.ps1' -OutFile 'C:/script_win10.ps1'
+        Invoke-WebRequest -ErrorAction Stop -Uri 'https://konek.parasat.tv:53000/computer_detail/script_win10.ps1' -OutFile 'C:/script_win10.ps1'
     }
     catch {
         Write-Host 'Error update_code'
@@ -212,8 +212,7 @@ if($status -eq 1){
         "hostname"="$hostname"
         } | ConvertTo-Json 
 
-        #http://103.62.153.74:53000/computer_detail/get_computer_latest_update_id.php
-        $query_latest_id = Invoke-RestMethod -ErrorAction Stop -Uri "http://103.62.153.74:53000/computer_detail/get_computer_latest_update_id.php" -Method 'Post' -Body $body_hostname -Headers $header
+        $query_latest_id = Invoke-RestMethod -ErrorAction Stop -Uri "https://konek.parasat.tv:53000/computer_detail/get_computer_latest_update_id.php" -Method 'Post' -Body $body_hostname -Headers $header
         $computer_latest_update_id = $query_latest_id | Select-Object -ExpandProperty "update_id"
     }
     catch {
@@ -237,11 +236,11 @@ if($status -eq 1){
     #update
     #8 != 8
     #1 != 0
-    Write-Host $id . $computer_latest_update_id . $update_once . 0
+    # Write-Host $id . $computer_latest_update_id . $update_once . 0
 
     if(($id -ne $computer_latest_update_id) -or ($update_once -eq 0)){
         try {
-            Invoke-RestMethod -ErrorAction Stop -Uri "http://103.62.153.74:53000/computer_detail/insert_computer_detail.php" -Method 'Post' -Body $body -Headers $header | ConvertTo-Json
+            Invoke-RestMethod -ErrorAction Stop -Uri "https://konek.parasat.tv:53000/computer_detail/insert_computer_detail.php" -Method 'Post' -Body $body -Headers $header | ConvertTo-Json
         }
         catch {
             Write-Host 'Error inserting data'
